@@ -6,6 +6,7 @@ import json
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import colorchooser
+from google.cloud import texttospeech
 from tkinter import ttk
 from PIL import Image, ImageFont, ImageDraw
 from aip import AipSpeech
@@ -208,15 +209,32 @@ def create_frame(num, player_name, text, bg):
     except:
         bg = Image.open("img/default/bg.jpg")
     # 语音合成
-    client = AipSpeech(setting["APP_ID"], setting["API_KEY"], setting["SECRET_KEY"])
+
+    client = texttospeech.TextToSpeechClient()
+    synthesis_input = texttospeech.SynthesisInput(text=text)
+    voice = texttospeech.VoiceSelectionParams(
+    language_code="zh-HK", ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL
+    )
+
+
+    audio_config = texttospeech.AudioConfig(
+    audio_encoding=texttospeech.AudioEncoding.MP3
+    )
+    # client = AipSpeech(setting["APP_ID"], setting["API_KEY"], setting["SECRET_KEY"])
     try:
-        result = client.synthesis(text, 'zh', 1, setting['character'][player_name]['sound'])
+       # result = client.synthesis(text, 'zh', 1, setting['character'][player_name]['sound'])
+       result = client.synthesize_speech(
+    input=synthesis_input, voice=voice, audio_config=audio_config
+)
     except:
-        result = client.synthesis(text, 'zh', 1)
+      #  result = client.synthesis(text, 'zh', 1)
+      result = client.synthesize_speech(
+    input=synthesis_input, voice=voice, audio_config=audio_config
+)
 
     if not isinstance(result, dict):
         with open('sound/' + str(num) + '.mp3', 'wb') as f:
-            f.write(result)
+            f.write(result.audio_content)
     else:
         print("语音合成出错")
 
