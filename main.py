@@ -218,7 +218,9 @@ def create_frame(num, player_name, text, bg):
 
 
     audio_config = texttospeech.AudioConfig(
-    audio_encoding=texttospeech.AudioEncoding.MP3
+    audio_encoding=texttospeech.AudioEncoding.MP3,
+    audio_pitch=0,
+    audio_speakingRate= 1.26
     )
     # client = AipSpeech(setting["APP_ID"], setting["API_KEY"], setting["SECRET_KEY"])
     try:
